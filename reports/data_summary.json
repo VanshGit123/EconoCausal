@@ -1,0 +1,40 @@
+{
+  "total_customers": 8000,
+  "total_columns": 10,
+  "overall_purchase_rate": 0.5215,
+  "missing_values": {
+    "customer_id": 0,
+    "age": 0,
+    "prior_purchases": 0,
+    "avg_order_value": 0,
+    "engagement": 0,
+    "days_since_last_purchase": 0,
+    "loyalty_member": 0,
+    "treatment_probability": 0,
+    "discount_amount": 0,
+    "purchased": 0
+  },
+  "discount_summary": [
+    {
+      "discount_amount": 0.0,
+      "customers": 4663,
+      "purchase_rate": 0.3753,
+      "avg_engagement": 0.5006,
+      "avg_prior_purchases": 2.93
+    },
+    {
+      "discount_amount": 10.0,
+      "customers": 1378,
+      "purchase_rate": 0.6219,
+      "avg_engagement": 0.5709,
+      "avg_prior_purchases": 3.1
+    },
+    {
+      "discount_amount": 20.0,
+      "customers": 1959,
+      "purchase_rate": 0.7989,
+      "avg_engagement": 0.5351,
+      "avg_prior_purchases": 3.1
+    }
+  ]
+}
