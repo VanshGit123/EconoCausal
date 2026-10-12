@@ -1,0 +1,19 @@
+
+digraph {
+    engagement -> discount_amount;
+    engagement -> purchased;
+
+    prior_purchases -> discount_amount;
+    prior_purchases -> purchased;
+
+    loyalty_member -> discount_amount;
+    loyalty_member -> purchased;
+
+    days_since_last_purchase -> discount_amount;
+    days_since_last_purchase -> purchased;
+
+    age -> purchased;
+    avg_order_value -> purchased;
+
+    discount_amount -> purchased;
+}
