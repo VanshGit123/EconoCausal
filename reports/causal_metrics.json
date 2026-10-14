@@ -1,0 +1,22 @@
+{
+  "true_effect_mae_10": 0.0459706700803461,
+  "true_effect_mae_20": 0.032965722502758726,
+  "true_effect_rmse_10": 0.05915461829883918,
+  "true_effect_rmse_20": 0.04161592680985041,
+  "training_rows": 6000,
+  "test_rows": 2000,
+  "treatment_levels": [
+    0,
+    10,
+    20
+  ],
+  "treatment_propensity_macro_ovr_auc": 0.5933130272662438,
+  "treatment_propensity_log_loss": 0.937211562511575,
+  "mean_estimated_uplift_10": 0.20827001950818483,
+  "mean_estimated_uplift_20": 0.4121288426280023,
+  "mean_estimated_uplift_10_percentage_points": 20.827001950818484,
+  "mean_estimated_uplift_20_percentage_points": 41.21288426280023,
+  "fraction_positive_effect_10": 1.0,
+  "fraction_positive_effect_20": 1.0,
+  "note": "Propensity metrics measure treatment-assignment prediction, not causal-effect accuracy. Validate overlap and use the known synthetic mechanism for causal-effect evaluation."
+}

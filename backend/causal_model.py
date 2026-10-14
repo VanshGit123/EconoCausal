@@ -62,7 +62,7 @@ def main():
             "Dataset missing. Run python backend/generate_data.py"
         )
 
-    df = pd.read_csv("data/customers.csv")
+    df = pd.read_csv(DATA_FILE)
 
     X = df[FEATURES].copy()
     T = df["discount_amount"].astype(int)  # 0, 10, or 20
@@ -121,6 +121,21 @@ def main():
     effect_20 = est.effect(
         X_test, T0=0, T1=20
     ).reshape(-1)
+
+    
+    true_10, true_20 = true_synthetic_effects(X_test)
+
+    mae_10 = np.mean(np.abs(effect_10 - true_10))
+    mae_20 = np.mean(np.abs(effect_20 - true_20))
+
+    rmse_10 = np.sqrt(np.mean((effect_10 - true_10) ** 2))
+    rmse_20 = np.sqrt(np.mean((effect_20 - true_20) ** 2))
+
+    print(f"True-effect MAE ($10): {mae_10:.4f}")
+    print(f"True-effect RMSE ($10): {rmse_10:.4f}")
+    print(f"True-effect MAE ($20): {mae_20:.4f}")
+    print(f"True-effect RMSE ($20): {rmse_20:.4f}")
+
 
     def evaluate_effect_accuracy(X_test, est_effect_10, est_effect_20):
         """Compare estimated effects to the known synthetic treatment effect."""
@@ -183,6 +198,10 @@ def main():
     results.to_csv(RESULT_FILE, index=False)
 
     metrics_payload = {
+        "true_effect_mae_10": float(mae_10),
+        "true_effect_mae_20": float(mae_20),
+        "true_effect_rmse_10": float(rmse_10),
+        "true_effect_rmse_20": float(rmse_20),
         "training_rows": int(len(X_train)),
         "test_rows": int(len(X_test)),
         "treatment_levels": [0, 10, 20],
