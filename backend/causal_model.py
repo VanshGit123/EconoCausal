@@ -113,6 +113,40 @@ def main():
         X=X_train,
         inference="auto",
     )
+    
+# Predict purchase probabilities for each discount option.
+    outcome_features_train = X_train.copy()
+    outcome_features_train["discount_amount"] = T_train.to_numpy()
+
+    outcome_probability_model = RandomForestClassifier(
+    n_estimators=200,
+    min_samples_leaf=20,
+    random_state=42,
+    n_jobs=-1,
+    )
+
+    outcome_probability_model.fit(outcome_features_train, Y_train)
+
+
+    def predict_purchase_probability(discount):
+     prediction_data = X_test.copy()
+     prediction_data["discount_amount"] = discount
+
+     class_index = list(
+        outcome_probability_model.classes_
+     ).index(1)
+
+     return outcome_probability_model.predict_proba(
+        prediction_data[outcome_features_train.columns]
+    )[:, class_index]
+
+
+    p0 = predict_purchase_probability(0)
+    p10 = predict_purchase_probability(10)
+    p20 = predict_purchase_probability(20)
+
+
+
 
     # Estimated change in purchase probability vs no discount.
     effect_10 = est.effect(
@@ -121,6 +155,16 @@ def main():
     effect_20 = est.effect(
         X_test, T0=0, T1=20
     ).reshape(-1)
+
+    
+# Predict baseline purchase probability.
+    baseline_probability = est.model_y  # The fitted outcome model is stored in the estimator.
+
+# Estimated treatment effects are probability differences.
+# Clip the resulting probabilities to the valid [0, 1] range.
+    p0 = np.clip(
+    1 - effect_10 * 0 + 0, 0, 1
+)
 
     
     true_10, true_20 = true_synthetic_effects(X_test)
@@ -180,9 +224,25 @@ def main():
         labels=propensity_model.classes_,
     )
 
-    results = df.loc[idx_test, ["customer_id", "discount_amount", "purchased"]].copy()
+    
+    
+    results = df.loc[
+    idx_test,
+    [
+        "customer_id",
+        "discount_amount",
+        "purchased",
+        "avg_order_value",
+    ],
+].copy()
+
     results["ite_discount_10"] = effect_10
     results["ite_discount_20"] = effect_20
+
+    results["purchase_probability_0"] = p0
+    results["purchase_probability_10"] = p10
+    results["purchase_probability_20"] = p20
+
     results["predicted_uplift_10_pp"] = effect_10 * 100
     results["predicted_uplift_20_pp"] = effect_20 * 100
     results["recommended_discount_by_uplift"] = np.select(

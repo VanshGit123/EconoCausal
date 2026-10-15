@@ -1,0 +1,13 @@
+{
+  "customers_evaluated": 2000,
+  "profit_margin_assumption": 0.3,
+  "recommended_discount_counts": {
+    "0": 2000,
+    "10": 0,
+    "20": 0
+  },
+  "total_expected_profit_if_no_discount": 38630.630999999994,
+  "total_expected_profit_under_recommendations": 38630.630999999994,
+  "estimated_incremental_expected_profit": 0.0,
+  "warning": "Model-based estimates, not guaranteed realized profit. Validate with a randomized campaign and actual margin data."
+}

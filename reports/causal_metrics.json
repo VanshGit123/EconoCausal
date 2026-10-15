@@ -1,7 +1,7 @@
 {
-  "true_effect_mae_10": 0.0459706700803461,
+  "true_effect_mae_10": 0.04597067008034611,
   "true_effect_mae_20": 0.032965722502758726,
-  "true_effect_rmse_10": 0.05915461829883918,
+  "true_effect_rmse_10": 0.05915461829883919,
   "true_effect_rmse_20": 0.04161592680985041,
   "training_rows": 6000,
   "test_rows": 2000,
