@@ -12,6 +12,7 @@ SUMMARY_FILE = ROOT / "reports" / "optimization_summary.json"
 
 PROFIT_MARGIN = 0.30
 DISCOUNT_OPTIONS = [0, 10, 20]
+CAMPAIGN_BUDGET = 10_000.0
 
 
 def main():
@@ -76,10 +77,10 @@ def main():
         20: "expected_profit_20",
     }
 
+    # Choose the best offer per customer based on expected profit.
     profit_matrix = np.column_stack(
         [df[profit_columns[d]].to_numpy() for d in DISCOUNT_OPTIONS]
     )
-
     best_indices = np.argmax(profit_matrix, axis=1)
     df["recommended_discount"] = np.array(DISCOUNT_OPTIONS)[best_indices]
     df["expected_profit_best"] = profit_matrix[
@@ -90,6 +91,15 @@ def main():
     df["expected_profit_no_discount"] = df["expected_profit_0"]
     df["incremental_expected_profit"] = (
         df["expected_profit_best"] - df["expected_profit_no_discount"]
+    )
+
+    selected_probabilities = np.take_along_axis(
+        df[[f"purchase_probability_{d}" for d in DISCOUNT_OPTIONS]].to_numpy(),
+        best_indices[:, None],
+        axis=1,
+    ).ravel()
+    total_discount_spend = float(
+        np.sum(selected_probabilities * df["recommended_discount"].to_numpy())
     )
 
     OUTPUT_FILE.parent.mkdir(parents=True, exist_ok=True)
@@ -115,6 +125,10 @@ def main():
             "Model-based estimates, not guaranteed realized profit. "
             "Validate with a randomized campaign and actual margin data."
         ),
+        "campaign_budget": CAMPAIGN_BUDGET,
+        "total_discount_spend": total_discount_spend,
+        "remaining_budget": CAMPAIGN_BUDGET - total_discount_spend,
+        "budget_respected": total_discount_spend <= CAMPAIGN_BUDGET,
     }
 
     SUMMARY_FILE.write_text(
