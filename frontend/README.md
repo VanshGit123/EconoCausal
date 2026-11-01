@@ -1,16 +1,53 @@
-# React + Vite
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+## API Documentation
 
-Currently, two official plugins are available:
+EconoCausal provides a REST API built using FastAPI.
+The API exposes customer-level recommendations, causal
+model evaluation metrics, and discount optimization results.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+### Available Endpoints
 
-## React Compiler
+| Method | Endpoint | Description |
+|---|---|---|
+| GET | `/` | Project information |
+| GET | `/health` | API health status |
+| GET | `/api/metrics` | Causal model evaluation metrics |
+| GET | `/api/customers` | Customer recommendations |
+| GET | `/api/discount-distribution` | Discount distribution |
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Running the Backend
 
-## Expanding the Oxlint configuration
+Run the following command from the project root:
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+```bash
+python -m uvicorn backend.api:app --reload
+```
+
+Open the interactive API documentation:
+
+`http://127.0.0.1:8000/docs`
+
+### Customer API Example
+
+Request:
+
+`GET /api/customers?limit=10&offset=0`
+
+The endpoint supports pagination using the limit and offset
+query parameters. It can also filter customers by their
+recommended discount when supported by the API.
+
+# EconoCausal Frontend
+
+React-based analytics dashboard for EconoCausal.
+
+## Technologies
+- React
+- Vite
+- Recharts
+- Lucide React
+
+## Installation
+
+```bash
+npm install
