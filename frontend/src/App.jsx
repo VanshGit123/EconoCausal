@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
 import {
-  Activity, Users, Target, Wallet, RefreshCw, TrendingUp,
+  Users, Target, Wallet, RefreshCw, TrendingUp,
   AlertCircle, CheckCircle2, BarChart3, BrainCircuit, Search,
-  LayoutDashboard, SlidersHorizontal, ArrowUpRight, IndianRupee,
+  LayoutDashboard, SlidersHorizontal, IndianRupee,
   CircleHelp, Menu, X
 } from "lucide-react";
 import {
@@ -183,11 +183,6 @@ function App() {
           <strong>Causal AI engine</strong>
           <span>CausalForestDML · EconML</span>
         </div>
-        <div className="sidebar-bottom">
-          <span className="status-dot" />
-          <div><strong>API connection</strong><span>localhost:8000</span></div>
-          <CheckCircle2 size={16} className="connection-check" />
-        </div>
       </aside>
 
       {mobileMenu && <button className="mobile-backdrop" onClick={() => setMobileMenu(false)} aria-label="Close navigation" />}
@@ -197,7 +192,7 @@ function App() {
           <div className="heading-group">
             <button className="mobile-menu-button" onClick={() => setMobileMenu(true)} aria-label="Open menu"><Menu size={20} /></button>
             <div>
-              <div className="eyebrow">ECONOMICS & CAUSAL AI <span className="live-indicator">LIVE DATA</span></div>
+              <div className="eyebrow">ECONOMICS & CAUSAL AI <span className="live-indicator">MODEL INSIGHTS</span></div>
               <h1>Dynamic Pricing Intelligence</h1>
               <p>Understand customer response. Optimize every discount decision.</p>
             </div>
