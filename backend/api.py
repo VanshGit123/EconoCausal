@@ -65,6 +65,28 @@ def read_json_report(path: Path) -> dict:
             detail=f"Could not read {path.name}: {exc}",
         )
 
+def add_uplift_columns(df: pd.DataFrame) -> pd.DataFrame:
+    df = df.copy()
+
+    required_columns = [
+        "purchase_probability_0",
+        "purchase_probability_10",
+        "purchase_probability_20",
+    ]
+
+    if all(col in df.columns for col in required_columns):
+        df["uplift_10_pp"] = (
+            df["purchase_probability_10"]
+            - df["purchase_probability_0"]
+        ) * 100
+
+        df["uplift_20_pp"] = (
+            df["purchase_probability_20"]
+            - df["purchase_probability_0"]
+        ) * 100
+
+    return df
+
 
 @app.get("/")
 def home():
@@ -85,6 +107,7 @@ def get_metrics():
     return {
         "causal_metrics": read_json_report(METRICS_FILE),
         "optimization_summary": read_json_report(SUMMARY_FILE),
+        
     }
 
 
