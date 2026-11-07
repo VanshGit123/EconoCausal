@@ -44,6 +44,33 @@ function getRecommendation(customer) {
     customer.discount_amount ?? 0;
 }
 
+const customerColumns = [
+  ["customer_id", "Customer ID"],
+  ["purchase_probability_0", "Purchase · ₹0"],
+  ["purchase_probability_10", "Purchase · ₹10"],
+  ["purchase_probability_20", "Purchase · ₹20"],
+  ["uplift_10", "Uplift · ₹10"],
+  ["uplift_20", "Uplift · ₹20"],
+  ["recommended_discount", "Suggested offer"],
+  ["expected_profit_best", "Expected profit"]
+];
+
+const visibleColumns = customerColumns;
+
+const calculateUplift = (customer, discount) => {
+  const baseline = customer.purchase_probability_0;
+  const discounted = customer[`purchase_probability_${discount}`];
+
+  if (
+    baseline == null ||
+    discounted == null
+  ) {
+    return "—";
+  }
+
+  return `${((discounted - baseline) * 100).toFixed(2)} pp`;
+};
+
 function App() {
   const [metrics, setMetrics] = useState({});
   const [customers, setCustomers] = useState([]);
@@ -161,6 +188,36 @@ function App() {
     ["RMSE · ₹20", formatNumber(metrics.true_effect_rmse_20, 4)],
     ["Treatment propensity AUC", formatNumber(metrics.treatment_propensity_macro_ovr_auc, 4)]
   ];
+
+  const getCustomerValue = (customer, key) => {
+  if (key === "uplift_10") {
+    return (
+      (customer.purchase_probability_10 -
+        customer.purchase_probability_0) * 100
+    ).toFixed(2) + " pp";
+  }
+
+  if (key === "uplift_20") {
+    return (
+      (customer.purchase_probability_20 -
+        customer.purchase_probability_0) * 100
+    ).toFixed(2) + " pp";
+  }
+
+  if (key.startsWith("purchase_probability_")) {
+    return (customer[key] * 100).toFixed(2) + "%";
+  }
+
+  if (key === "recommended_discount") {
+    return `₹${customer[key]}`;
+  }
+
+  if (key.startsWith("expected_profit")) {
+    return `₹${Number(customer[key]).toFixed(2)}`;
+  }
+
+  return formatValue(customer[key]);
+};
 
   return (
     <div className="app-shell">
@@ -313,17 +370,40 @@ function App() {
           </div>
           <div className="table-scroll">
             <table>
-              <thead><tr><th>Customer</th><th>Purchase · ₹0</th><th>Purchase · ₹10</th><th>Purchase · ₹20</th><th>Uplift · ₹10</th><th>Uplift · ₹20</th><th>Suggested offer*</th></tr></thead>
+              <thead><tr><th>Customer</th><th>Purchase · ₹0</th><th>Purchase · ₹10</th><th>Purchase · ₹20</th><th>Uplift · ₹10</th><th>Uplift · ₹20</th><th>Suggested offer*</th><th>Expected profit</th></tr>
+              </thead>
               <tbody>
-                {filteredCustomers.map((c, index) => <tr key={c.customer_id ?? index}>
-                  <td className="customer-id">{c.customer_id ?? `Customer ${index + 1}`}</td>
-                  <td>{formatPercent(c.purchase_probability_0)}</td>
-                  <td>{formatPercent(c.purchase_probability_10)}</td>
-                  <td>{formatPercent(c.purchase_probability_20)}</td>
-                  <td>{c.predicted_uplift_10_pp === undefined ? "—" : `${formatNumber(c.predicted_uplift_10_pp, 2)} pp`}</td>
-                  <td>{c.predicted_uplift_20_pp === undefined ? "—" : `${formatNumber(c.predicted_uplift_20_pp, 2)} pp`}</td>
-                  <td><span className="discount-pill">₹{formatNumber(getRecommendation(c), 0)}</span></td>
-                </tr>)}
+               {filteredCustomers.map((c, index) => (
+  <tr key={c.customer_id ?? index}>
+    <td className="customer-id">
+      {c.customer_id ?? `Customer ${index + 1}`}
+    </td>
+
+    <td>{formatPercent(c.purchase_probability_0)}</td>
+
+    <td>{formatPercent(c.purchase_probability_10)}</td>
+
+    <td>{formatPercent(c.purchase_probability_20)}</td>
+
+    <td>
+      {formatNumber(c.uplift_10_pp ?? c.predicted_uplift_10_pp, 2)} pp
+    </td>
+
+    <td>
+      {formatNumber(c.uplift_20_pp ?? c.predicted_uplift_20_pp, 2)} pp
+    </td>
+
+    <td>
+      <span className="discount-pill">
+        ₹{formatNumber(getRecommendation(c), 0)}
+      </span>
+    </td>
+
+    <td>
+      ₹{formatNumber(c.expected_profit_best, 2)}
+    </td>
+  </tr>
+))}
               </tbody>
             </table>
             {!filteredCustomers.length && <div className="empty-state">{loading ? "Loading customer predictions…" : "No customers match this search or filter."}</div>}
