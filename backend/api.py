@@ -118,6 +118,8 @@ def get_customers(
     discount: int | None = Query(default=None, description="Filter by recommended discount: 0, 10, or 20"),
 ):
     df = read_csv_report(OPTIMIZED_FILE)
+    df = read_csv_report(OPTIMIZED_FILE)
+    df = add_uplift_columns(df)
 
     if discount is not None:
         if discount not in [0, 10, 20]:
@@ -144,6 +146,8 @@ def get_customers(
 @app.get("/api/customers/{customer_id}")
 def get_customer(customer_id: str):
     df = read_csv_report(OPTIMIZED_FILE)
+    df = read_csv_report(OPTIMIZED_FILE)
+    df = add_uplift_columns(df)
 
     matches = df[
         df["customer_id"].astype(str) == str(customer_id)
