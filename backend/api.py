@@ -115,9 +115,11 @@ def get_metrics():
 def get_customers(
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
-    discount: int | None = Query(default=None, description="Filter by recommended discount: 0, 10, or 20"),
+    discount: int | None = Query(
+        default=None,
+        description="Filter by recommended discount: 0, 10, or 20",
+    ),
 ):
-    df = read_csv_report(OPTIMIZED_FILE)
     df = read_csv_report(OPTIMIZED_FILE)
     df = add_uplift_columns(df)
 
@@ -130,9 +132,8 @@ def get_customers(
         df = df[df["recommended_discount"] == discount]
 
     total = len(df)
-    page = df.iloc[offset:offset + limit]
+    page = df.iloc[offset : offset + limit]
 
-    # Convert NaN and NumPy values into JSON-safe Python values.
     records = json.loads(page.to_json(orient="records"))
 
     return {
