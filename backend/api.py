@@ -113,6 +113,7 @@ def get_metrics():
 
 @app.get("/api/customers")
 def get_customers(
+    
     limit: int = Query(default=20, ge=1, le=100),
     offset: int = Query(default=0, ge=0),
     discount: int | None = Query(
@@ -121,6 +122,16 @@ def get_customers(
     ),
 ):
     df = read_csv_report(OPTIMIZED_FILE)
+    # Calculate individual predicted uplift in percentage points
+    df["predicted_uplift_10_pp"] = (
+    df["purchase_probability_10"] -
+    df["purchase_probability_0"]
+     ) * 100
+
+    df["predicted_uplift_20_pp"] = (
+    df["purchase_probability_20"] -
+    df["purchase_probability_0"]
+    ) * 100
     df = add_uplift_columns(df)
 
     if discount is not None:
